@@ -1,11 +1,13 @@
 package app;
-
+import java.io.*;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Bank {
 	// Variable for logging/not logging
 	private static final boolean LOG = true;
-
+	
+	private static File f = new File("list.txt");
 	private static int accountCounter = 1;
 	private String name;
 	private ArrayList<Account> accounts;
@@ -77,12 +79,49 @@ public class Bank {
 
 	public void saveAccounts(String filename) {
 		// TODO
-		log("Save not yet implemented.");
+		try 
+		{
+			//save accounts
+			FileWriter fw = new FileWriter(new File(filename));
+			
+			for (Account a: accounts)
+			{
+				String message = a.toString();
+				fw.append(message +"\n");
+			}
+			fw.close();
+			log("Accounts saved.");
+		} 
+		catch(IOException e)
+		{
+			System.out.println("OOPS");
+			e.printStackTrace();
+			log("Save could not be implemented.");
+		}
 	}
 
 	public void loadAccounts(String filename) {
-		// TODO
-		log("Load not yet implemented.");
+		//go through each line, turn line into account, put account in ArrayList
+		try {
+			Scanner fileIn = new Scanner(new File(filename));
+			while(fileIn.hasNextLine())
+			{
+				String line = fileIn.nextLine();
+				String[] split = line.split("::");
+				int acctNo = Integer.parseInt(split[0].substring(1));
+				String name = split[1];
+				int amt = Integer.parseInt(split[2].substring(1, split[2].length()-1));
+				
+				Account a = new Account(acctNo, name, amt);
+				accounts.add(a);
+			}
+			fileIn.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		log("Loaded file " + filename);
 	}
 
 	private Account findAccount(int accountNumber) {
@@ -111,6 +150,14 @@ public class Bank {
 			this.name = name;
 			balance = 0;
 			accountNumber = accountCounter++;
+		}
+		
+		private Account (int an, String name, int bal)
+		{
+			this.accountNumber = an;
+			this.name = name;
+			this.balance = bal;
+			
 		}
 
 		public String toString() {
