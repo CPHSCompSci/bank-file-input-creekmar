@@ -8,7 +8,6 @@ public class Bank {
 	private static final boolean LOG = true;
 	
 	private static File f = new File("list.txt");
-	private static int accountCounter = 1;
 	private String name;
 	private ArrayList<Account> accounts;
 
@@ -149,7 +148,23 @@ public class Bank {
 		private Account(String name) {
 			this.name = name;
 			balance = 0;
-			accountNumber = accountCounter++;
+			accountNumber = getRandomAccountNumber();
+		}
+		
+		private int getRandomAccountNumber()
+		{
+			boolean flag;
+			int num = 0;
+			do {
+				flag = false;
+				num = (int) Math.random()* Integer.MAX_VALUE;
+				for(Account a: accounts)
+				{
+					if(a.accountNumber == num)
+						flag = true;
+				}
+			}while (flag);
+			return num;
 		}
 		
 		private Account (int an, String name, int bal)
